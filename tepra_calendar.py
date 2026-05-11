@@ -48,19 +48,36 @@ def make_calendar(year, month):
     width = cell_w * 7
     height = 96
 
+    header_h = 12
+    weekdays_h = 12
+    date_h = 12
+
     draw = Draw(width, height)
+
+    # 年月表示
+    d = EraDate.from_date(datetime.date(year, month, 1))
+    # fmt: off
+    text = f"{d.strftime("%Y(%-h%-Y)")}/{month}"
+    # fmt: on
+    draw.draw_cell(
+        x=0,
+        y=0,
+        w=width,
+        h=header_h,
+        text=text,
+        reverse=False
+    )
 
     # 曜日部分のグリッド
     weekdays = ["SU", "MO", "TU", "WE", "TH", "FR", "SA"]
 
-    cell_h = 12
     for c, text in enumerate(weekdays):
         reverse = (text == "SU")
         draw.draw_cell(
             x=c * cell_w,
-            y=0,
+            y=header_h,
             w=cell_w,
-            h=cell_h,
+            h=weekdays_h,
             text=text,
             reverse=reverse
         )
@@ -69,7 +86,9 @@ def make_calendar(year, month):
     cal = calendar.Calendar(firstweekday=6)
     weeks = cal.monthdayscalendar(year, month)
 
-    cell_h = 14
+    if len(weeks) <= 5:
+        date_h = 14
+
     for r, row in enumerate(weeks):
         for c, day in enumerate(row):
             if day == 0:
@@ -81,26 +100,12 @@ def make_calendar(year, month):
 
             draw.draw_cell(
                 x=c * cell_w,
-                y=r * cell_h + 12,
+                y=r * date_h + header_h + weekdays_h,
                 w=cell_w,
-                h=cell_h,
+                h=date_h,
                 text=str(day),
                 reverse=reverse
             )
-
-    # 年月表示
-    d = EraDate.from_date(datetime.date(year, month, 1))
-    text = f"{d.strftime("%Y(%-h%-Y)")}/{month}"
-    # bbox = draw.textbbox((0, 0), text, font=f)
-    # tx = width - (bbox[2] - bbox[0]) - 3
-    # ty = 5 * date_h + day_h - 4
-
-    # draw.text(
-    #     (tx, ty),
-    #     text,
-    #     font=f,
-    #     fill=0
-    # )
 
     out = f"./calendars/{year:04}_{month:02}.png"
     draw.save(out)
