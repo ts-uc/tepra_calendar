@@ -7,13 +7,14 @@ import argparse
 
 H = 96
 
+
 class Draw:
     def __init__(self, w, h):
         self.font = read_font(19)
         self.img = Image.new("1", (w, h), 1)
         self.draw = ImageDraw.Draw(self.img)
-    
-    def draw_cell(self, x:int, y:int, w:int, h:int, text:str, reverse:bool):
+
+    def draw_cell(self, x: int, y: int, w: int, h: int, text: str, reverse: bool):
         if reverse:
             self.draw.rectangle(
                 (x, y, x + w - 1, y + h - 1),
@@ -21,7 +22,7 @@ class Draw:
             )
         bbox = self.draw.textbbox((0, 0), text, font=self.font)
         tx = x + (w - (bbox[2] - bbox[0])) // 2
-        ty = y - (11 - h//2) 
+        ty = y - (11 - h//2)
 
         self.draw.text(
             (tx, ty),
@@ -30,8 +31,9 @@ class Draw:
             fill=1 if reverse else 0
         )
 
-    def save(self, out:str):
+    def save(self, out: str):
         self.img.save(out)
+
 
 def read_font(size) -> ImageFont:
     try:
