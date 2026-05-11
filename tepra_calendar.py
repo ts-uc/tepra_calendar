@@ -5,8 +5,6 @@ import datetime
 import jpholiday
 import argparse
 
-H = 96
-
 
 class Draw:
     def __init__(self, w, h):
@@ -47,29 +45,31 @@ def read_font(size) -> ImageFont:
 
 def make_calendar(year, month):
     cell_w = 20
-    day_h = 12
-    date_h = 14
     width = cell_w * 7
+    height = 96
 
-    draw = Draw(width, H)
+    draw = Draw(width, height)
 
     # 曜日部分のグリッド
     weekdays = ["SU", "MO", "TU", "WE", "TH", "FR", "SA"]
 
+    cell_h = 12
     for c, text in enumerate(weekdays):
-        x = c * cell_w
-        y = 0
-
         reverse = (text == "SU")
-
         draw.draw_cell(
-            x, y, cell_w, day_h, text, reverse
+            x=c * cell_w,
+            y=0,
+            w=cell_w,
+            h=cell_h,
+            text=text,
+            reverse=reverse
         )
 
     # 日付部分のグリッド
     cal = calendar.Calendar(firstweekday=6)
     weeks = cal.monthdayscalendar(year, month)
 
+    cell_h = 14
     for r, row in enumerate(weeks):
         for c, day in enumerate(row):
             if day == 0:
@@ -79,13 +79,13 @@ def make_calendar(year, month):
             d = datetime.date(year, month, day)
             reverse = (c == 0) or jpholiday.is_holiday(d)
 
-            x = c * cell_w
-            y = r * date_h + day_h
-
-            text = str(day)
-
             draw.draw_cell(
-                x, y, cell_w, date_h, text, reverse
+                x=c * cell_w,
+                y=r * cell_h + 12,
+                w=cell_w,
+                h=cell_h,
+                text=str(day),
+                reverse=reverse
             )
 
     # 年月表示
