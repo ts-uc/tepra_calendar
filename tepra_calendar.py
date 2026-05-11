@@ -52,12 +52,20 @@ def make_calendar(year, month):
     weekdays_h = 12
     date_h = 12
 
+    cal = calendar.Calendar(firstweekday=6)
+    weeks = cal.monthdayscalendar(year, month)
+
+    if len(weeks) <= 5:
+        header_h = 14
+        date_h = 14
+
+
     draw = Draw(width, height)
 
     # 年月表示
     d = EraDate.from_date(datetime.date(year, month, 1))
     # fmt: off
-    text = f"{d.strftime("%Y(%-h%-Y)")}/{month}"
+    text = f"{year:04}-{month:02}"
     # fmt: on
     draw.draw_cell(
         x=0,
@@ -69,10 +77,10 @@ def make_calendar(year, month):
     )
 
     # 曜日部分のグリッド
-    weekdays = ["SU", "MO", "TU", "WE", "TH", "FR", "SA"]
+    weekdays = ["S", "M", "T", "W", "T", "F", "S"]
 
     for c, text in enumerate(weekdays):
-        reverse = (text == "SU")
+        reverse = (c == 0)
         draw.draw_cell(
             x=c * cell_w,
             y=header_h,
@@ -83,11 +91,6 @@ def make_calendar(year, month):
         )
 
     # 日付部分のグリッド
-    cal = calendar.Calendar(firstweekday=6)
-    weeks = cal.monthdayscalendar(year, month)
-
-    if len(weeks) <= 5:
-        date_h = 14
 
     for r, row in enumerate(weeks):
         for c, day in enumerate(row):
