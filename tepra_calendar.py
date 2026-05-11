@@ -7,8 +7,33 @@ import argparse
 
 H = 96
 
+class Draw:
+    def __init__(self, w, h):
+        self.font = read_font(19)
+        self.img = Image.new("1", (w, h), 1)
+        self.draw = ImageDraw.Draw(self.img)
+    
+    def draw_cell(self, x:int, y:int, w:int, h:int, text:str, reverse:bool):
+        if reverse:
+            self.draw.rectangle(
+                (x, y, x + w - 1, y + h - 1),
+                fill=0
+            )
+        bbox = self.draw.textbbox((0, 0), text, font=self.font)
+        tx = x + (w - (bbox[2] - bbox[0])) // 2
+        ty = y - (11 - h//2) 
 
-def font(size) -> ImageFont:
+        self.draw.text(
+            (tx, ty),
+            text,
+            font=self.font,
+            fill=1 if reverse else 0
+        )
+
+    def save(self, out:str):
+        self.img.save(out)
+
+def read_font(size) -> ImageFont:
     try:
         return ImageFont.truetype(
             "./fonts/Jersey10-Regular.ttf",
@@ -17,33 +42,14 @@ def font(size) -> ImageFont:
     except:
         return ImageFont.load_default()
 
-def draw_cell(draw: ImageDraw, f: ImageFont, x:int, y:int, w:int, h:int, text:str, reverse:bool):
-    if reverse:
-        draw.rectangle(
-            (x, y, x + w - 1, y + h - 1),
-            fill=0
-        )
-    bbox = draw.textbbox((0, 0), text, font=f)
-    tx = x + (w - (bbox[2] - bbox[0])) // 2
-    ty = y - (11 - h//2) 
-
-    draw.text(
-        (tx, ty),
-        text,
-        font=f,
-        fill=1 if reverse else 0
-    )
 
 def make_calendar(year, month):
-
-    f = font(19)
     cell_w = 20
     day_h = 12
     date_h = 14
     width = cell_w * 7
 
-    img = Image.new("1", (width, H), 1)
-    draw = ImageDraw.Draw(img)
+    draw = Draw(width, H)
 
     # 曜日部分のグリッド
     weekdays = ["SU", "MO", "TU", "WE", "TH", "FR", "SA"]
@@ -54,8 +60,8 @@ def make_calendar(year, month):
 
         reverse = (text == "SU")
 
-        draw_cell(
-            draw, f, x, y, cell_w, day_h, text, reverse
+        draw.draw_cell(
+            x, y, cell_w, day_h, text, reverse
         )
 
     # 日付部分のグリッド
@@ -76,8 +82,8 @@ def make_calendar(year, month):
 
             text = str(day)
 
-            draw_cell(
-                draw, f, x, y, cell_w, date_h, text, reverse
+            draw.draw_cell(
+                x, y, cell_w, date_h, text, reverse
             )
 
     # 年月表示
@@ -95,7 +101,7 @@ def make_calendar(year, month):
     # )
 
     out = f"./calendars/{year:04}_{month:02}.png"
-    img.save(out)
+    draw.save(out)
     print(out)
 
 
