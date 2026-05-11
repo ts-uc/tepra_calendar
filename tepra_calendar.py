@@ -8,7 +8,7 @@ import argparse
 H = 96
 
 
-def font(size):
+def font(size) -> ImageFont:
     try:
         return ImageFont.truetype(
             "./fonts/Jersey10-Regular.ttf",
@@ -17,6 +17,22 @@ def font(size):
     except:
         return ImageFont.load_default()
 
+def draw_cell(draw: ImageDraw, f: ImageFont, x:int, y:int, w:int, h:int, text:str, reverse:bool):
+    if reverse:
+        draw.rectangle(
+            (x, y, x + w - 1, y + h - 1),
+            fill=0
+        )
+    bbox = draw.textbbox((0, 0), text, font=f)
+    tx = x + (w - (bbox[2] - bbox[0])) // 2
+    ty = y - (11 - h//2) 
+
+    draw.text(
+        (tx, ty),
+        text,
+        font=f,
+        fill=1 if reverse else 0
+    )
 
 def make_calendar(year, month):
 
@@ -38,20 +54,8 @@ def make_calendar(year, month):
 
         reverse = (text == "SU")
 
-        if reverse:
-            draw.rectangle(
-                (x, y, x + cell_w - 1, y + day_h - 1),
-                fill=0
-            )
-        bbox = draw.textbbox((0, 0), text, font=f)
-        tx = x + (cell_w - (bbox[2] - bbox[0])) // 2
-        ty = y - 5
-
-        draw.text(
-            (tx, ty),
-            text,
-            font=f,
-            fill=1 if reverse else 0
+        draw_cell(
+            draw, f, x, y, cell_w, day_h, text, reverse
         )
 
     # 日付部分のグリッド
@@ -72,35 +76,23 @@ def make_calendar(year, month):
 
             text = str(day)
 
-            if reverse:
-                draw.rectangle(
-                    (x, y, x + cell_w - 1, y + date_h - 1),
-                    fill=0
-                )
-            bbox = draw.textbbox((0, 0), text, font=f)
-            tx = x + (cell_w - (bbox[2] - bbox[0])) // 2
-            ty = y - 4
-
-            draw.text(
-                (tx, ty),
-                text,
-                font=f,
-                fill=1 if reverse else 0
+            draw_cell(
+                draw, f, x, y, cell_w, date_h, text, reverse
             )
 
     # 年月表示
     d = EraDate.from_date(datetime.date(year, month, 1))
     text = f"{d.strftime("%Y(%-h%-Y)")}/{month}"
-    bbox = draw.textbbox((0, 0), text, font=f)
-    tx = width - (bbox[2] - bbox[0]) - 3
-    ty = 5 * date_h + day_h - 4
+    # bbox = draw.textbbox((0, 0), text, font=f)
+    # tx = width - (bbox[2] - bbox[0]) - 3
+    # ty = 5 * date_h + day_h - 4
 
-    draw.text(
-        (tx, ty),
-        text,
-        font=f,
-        fill=0
-    )
+    # draw.text(
+    #     (tx, ty),
+    #     text,
+    #     font=f,
+    #     fill=0
+    # )
 
     out = f"./calendars/{year:04}_{month:02}.png"
     img.save(out)
