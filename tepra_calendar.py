@@ -18,7 +18,7 @@ class Draw:
                 fill=0
             )
         bbox = self.draw.textbbox((0, 0), text, font=self.font_j10)
-        tx = x + (w - (bbox[2] - bbox[0])) // 2
+        tx = x + (w - (bbox[2] - bbox[0]) + 1) // 2
         ty = y - (11 - h//2)
 
         self.draw.text(
