@@ -1,5 +1,4 @@
 from PIL import Image, ImageDraw, ImageFont
-from japanera import EraDate
 import calendar
 import datetime
 import jpholiday
@@ -9,11 +8,10 @@ import argparse
 class Draw:
     def __init__(self, w, h):
         self.font_j10 = read_font("./fonts/Jersey10-Regular.ttf", 19)
-        self.font_m5 = read_font("./fonts/Micro5-Regular.ttf", 21)
         self.img = Image.new("1", (w, h), 1)
         self.draw = ImageDraw.Draw(self.img)
 
-    def draw_cell(self, x: int, y: int, w: int, h: int, text: str, reverse: bool):
+    def draw_cell(self, x: int, y: int, w: int, h: int, text: str, reverse: bool = False):
         if reverse:
             self.draw.rectangle(
                 (x, y, x + w - 1, y + h - 1),
@@ -36,10 +34,7 @@ class Draw:
 
 def read_font(path: str, size: int) -> ImageFont:
     try:
-        return ImageFont.truetype(
-            path,
-            size
-        )
+        return ImageFont.truetype(path, size)
     except:
         return ImageFont.load_default()
 
@@ -60,21 +55,16 @@ def make_calendar(year, month):
         weekdays_h = 14
         date_h = 14
 
-
     draw = Draw(width, height)
 
     # 年月表示
-    d = EraDate.from_date(datetime.date(year, month, 1))
-    # fmt: off
     text = f"{year:04}-{month:02}"
-    # fmt: on
     draw.draw_cell(
         x=0,
         y=0,
         w=width,
         h=header_h,
-        text=text,
-        reverse=False
+        text=text
     )
 
     # 曜日部分のグリッド
