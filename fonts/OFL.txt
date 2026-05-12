@@ -3,3 +3,9 @@ designed by Sarah Cadigan-Fried.
 
 Licensed under the SIL Open Font License 1.1.
 https://openfontlicense.org/
+
+This project also includes the "micro 5" font
+designed by Sarah Cadigan-Fried.
+
+Licensed under the SIL Open Font License 1.1.
+https://openfontlicense.org/
