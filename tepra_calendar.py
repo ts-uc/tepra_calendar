@@ -82,22 +82,21 @@ def make_calendar(year, month):
         )
 
     # 日付部分のグリッド
-
     for r, row in enumerate(weeks):
         for c, day in enumerate(row):
-            if day == 0:
-                continue
-
             # 祝日判定
-            d = datetime.date(year, month, day)
-            reverse = (c == 0) or jpholiday.is_holiday(d)
+            is_holiday = False
+            if day != 0:
+                d = datetime.date(year, month, day)
+                is_holiday = jpholiday.is_holiday(d)
+            reverse = (c == 0) or is_holiday
 
             draw.draw_cell(
                 x=c * cell_w,
                 y=r * date_h + header_h + weekdays_h,
                 w=cell_w,
                 h=date_h,
-                text=str(day),
+                text="" if day == 0 else str(day),
                 reverse=reverse
             )
 
