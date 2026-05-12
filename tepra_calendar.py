@@ -57,7 +57,7 @@ def make_calendar(year, month):
     weeks = cal.monthdayscalendar(year, month)
 
     if len(weeks) <= 5:
-        header_h = 14
+        weekdays_h = 14
         date_h = 14
 
 
