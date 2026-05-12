@@ -107,8 +107,10 @@ def make_calendar(year, month):
 
 if __name__ == "__main__":
     p = argparse.ArgumentParser()
-    p.add_argument("year", type=int)
-    p.add_argument("month", type=int)
+    p.add_argument("begin", type=int)
+    p.add_argument("end", type=int)
     a = p.parse_args()
 
-    make_calendar(a.year, a.month)
+    for year in range(a.begin, a.end+1):
+        for month in range(1, 13):
+            make_calendar(year, month)
