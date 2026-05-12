@@ -3,11 +3,14 @@ import calendar
 import datetime
 import jpholiday
 import argparse
+import os
+from pathlib import Path
 
 
 class Draw:
     def __init__(self, w, h):
-        self.font_j10 = read_font("./fonts/Jersey10-Regular.ttf", 19)
+        font_path = os.path.join(os.path.dirname(__file__), "fonts", "Jersey10-Regular.ttf")
+        self.font_j10 = read_font(font_path, 19)
         self.img = Image.new("1", (w, h), 1)
         self.draw = ImageDraw.Draw(self.img)
 
@@ -32,14 +35,15 @@ class Draw:
         self.img.save(out)
 
 
-def read_font(path: str, size: int) -> ImageFont:
+def read_font(path: str, size: int) -> ImageFont.FreeTypeFont:
     try:
         return ImageFont.truetype(path, size)
-    except:
+    except (IOError, OSError):
+        print(f"Warning: Failed to load font from {path}. Using default font.")
         return ImageFont.load_default()
 
 
-def make_calendar(year, month):
+def make_calendar(year: int, month: int) -> None:
     cell_w = 20
     width = cell_w * 7
     height = 96
@@ -100,7 +104,10 @@ def make_calendar(year, month):
                 reverse=reverse
             )
 
-    out = f"./calendars/{year:04}_{month:02}.png"
+    output_dir = os.path.join(os.path.dirname(__file__), "calendars")
+    os.makedirs(output_dir, exist_ok=True)
+    
+    out = os.path.join(output_dir, f"{year:04}_{month:02}.png")
     draw.save(out)
     print(out)
 
