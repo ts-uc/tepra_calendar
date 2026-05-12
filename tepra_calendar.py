@@ -8,7 +8,8 @@ import argparse
 
 class Draw:
     def __init__(self, w, h):
-        self.font = read_font(19)
+        self.font_j10 = read_font("./fonts/Jersey10-Regular.ttf", 19)
+        self.font_m5 = read_font("./fonts/Micro5-Regular.ttf", 21)
         self.img = Image.new("1", (w, h), 1)
         self.draw = ImageDraw.Draw(self.img)
 
@@ -18,14 +19,14 @@ class Draw:
                 (x, y, x + w - 1, y + h - 1),
                 fill=0
             )
-        bbox = self.draw.textbbox((0, 0), text, font=self.font)
+        bbox = self.draw.textbbox((0, 0), text, font=self.font_j10)
         tx = x + (w - (bbox[2] - bbox[0])) // 2
         ty = y - (11 - h//2)
 
         self.draw.text(
             (tx, ty),
             text,
-            font=self.font,
+            font=self.font_j10,
             fill=1 if reverse else 0
         )
 
@@ -33,10 +34,10 @@ class Draw:
         self.img.save(out)
 
 
-def read_font(size) -> ImageFont:
+def read_font(path: str, size: int) -> ImageFont:
     try:
         return ImageFont.truetype(
-            "./fonts/Jersey10-Regular.ttf",
+            path,
             size
         )
     except:
