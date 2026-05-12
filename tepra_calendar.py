@@ -78,7 +78,7 @@ def make_calendar(year, month):
     )
 
     # 曜日部分のグリッド
-    weekdays = ["S", "M", "T", "W", "T", "F", "S"]
+    weekdays = ["SU", "MO", "TU", "WE", "TH", "FR", "SA"]
 
     for c, text in enumerate(weekdays):
         reverse = (c == 0)
